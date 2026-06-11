@@ -58,8 +58,9 @@
   .tarjeta h2{margin:0 0 4px; font-size:1.35rem; display:flex; align-items:center; gap:8px;}
   .tarjeta .sub{color:var(--gris); font-size:.88rem; margin:0 0 14px;}
 
-  .grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
-  @media(max-width:760px){.grid{grid-template-columns:1fr;}}
+  .grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px;}
+  .grid>div{min-width:0;}   /* permite que las columnas encojan: la fórmula hace scroll interno, no rompe el layout */
+  @media(max-width:760px){.grid{grid-template-columns:minmax(0,1fr);}}
 
   .figura{background:#fafaff; border:1px solid var(--linea); border-radius:12px;
     display:flex; align-items:center; justify-content:center; padding:10px; min-height:230px;}
@@ -190,6 +191,7 @@
     .grid{gap:14px;}
     .figura{min-height:180px; padding:6px;}
     .formula-box{font-size:.78rem;}
+    .formula-box .katex{font-size:.82em;}   /* fórmulas más compactas en móvil */
     .res-fila{font-size:.86rem;}
     .res-fila .val{font-size:.96rem;}
     .pasos{font-size:.72rem; padding:9px 10px; line-height:1.6; overflow-x:auto;}
