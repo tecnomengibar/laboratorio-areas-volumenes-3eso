@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔬 Laboratorio de Áreas y Volúmenes · 3.º ESO</title>
+<!-- KaTeX (renderizado de fórmulas en LaTeX) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --rosa:#e84a8a; --rosa-claro:#fde7f1;
+    --verde:#2f9e6b; --verde-claro:#e3f5ec;
+    --azul:#3478c2; --azul-claro:#e4eefb;
+    --naranja:#e8902a; --naranja-claro:#fdeede;
+    --morado:#8a5cc2; --morado-claro:#efe7f9;
+    --cian:#2bb3c0; --cian-claro:#e0f6f8;
+    --tinta:#2b2b3a; --gris:#6b6b7b; --linea:#e6e6ee;
+    --ok:#2f9e6b; --mal:#d6435b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    color:var(--tinta); background:#f6f6fb; line-height:1.5;
+  }
+  header{
+    background:linear-gradient(135deg,#fff,#fde7f1);
+    border-bottom:3px solid var(--rosa); padding:26px 18px 20px; text-align:center;
+  }
+  header h1{margin:0 0 6px; font-size:1.7rem;}
+  header p{margin:0; color:var(--gris); font-size:.95rem;}
+  .frase{margin-top:12px; display:inline-block; background:#fff; border:1px dashed var(--rosa);
+    border-radius:20px; padding:7px 16px; font-size:.9rem; color:var(--rosa);}
+
+  nav{
+    position:sticky; top:0; z-index:20; background:#fffffff2; backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--linea); display:flex; flex-wrap:wrap; gap:6px;
+    justify-content:center; padding:10px;
+  }
+  nav button{
+    border:1.5px solid var(--linea); background:#fff; border-radius:22px;
+    padding:7px 14px; font-size:.85rem; cursor:pointer; font-weight:600; color:var(--tinta);
+    transition:.15s;
+  }
+  nav button:hover{transform:translateY(-1px);}
+  nav button.activo{color:#fff;}
+
+  main{max-width:980px; margin:0 auto; padding:18px 14px 60px;}
+  .panel{display:none;}
+  .panel.activo{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tarjeta{
+    background:#fff; border-radius:16px; padding:20px; margin-bottom:18px;
+    box-shadow:0 2px 12px rgba(0,0,0,.05); border-top:5px solid var(--linea);
+  }
+  .tarjeta h2{margin:0 0 4px; font-size:1.35rem; display:flex; align-items:center; gap:8px;}
+  .tarjeta .sub{color:var(--gris); font-size:.88rem; margin:0 0 14px;}
+
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  @media(max-width:760px){.grid{grid-template-columns:1fr;}}
+
+  .figura{background:#fafaff; border:1px solid var(--linea); border-radius:12px;
+    display:flex; align-items:center; justify-content:center; padding:10px; min-height:230px;}
+  svg{max-width:100%; height:auto;}
+
+  .control{margin:14px 0;}
+  .control label{display:flex; justify-content:space-between; font-weight:600; font-size:.9rem; margin-bottom:5px;}
+  .control label span{font-weight:800;}
+  input[type=range]{width:100%; accent-color:var(--rosa);}
+
+  .resultados{background:#fafaff; border:1px solid var(--linea); border-radius:12px; padding:14px; margin-top:6px;}
+  .res-fila{display:flex; justify-content:space-between; align-items:baseline; padding:7px 0; border-bottom:1px dashed var(--linea); font-size:.92rem;}
+  .res-fila:last-child{border-bottom:none;}
+  .res-fila .etq{color:var(--gris);}
+  .res-fila .val{font-weight:800; font-size:1.05rem;}
+  .pasos{color:#444; background:#fff; border:1px solid var(--linea); border-radius:8px;
+    padding:12px 14px; margin-top:10px; line-height:2.1; overflow-x:auto;}
+  .pasos .katex{font-size:1.04em;}
+  .destaca{color:var(--rosa); font-weight:800;}
+
+  .formula-box{background:#fff8fb; border-left:4px solid var(--rosa); padding:8px 12px; border-radius:6px;
+    margin:6px 0; overflow-x:auto;}
+  .formula-box .katex{font-size:1.02em;}
+  .formula-box .katex-display{margin:.3em 0;}
+
+  /* colores por cuerpo */
+  #prisma .tarjeta{border-top-color:var(--verde);}    #prisma h2{color:var(--verde);}
+  #cilindro .tarjeta{border-top-color:var(--azul);}   #cilindro h2{color:var(--azul);}
+  #piramide .tarjeta{border-top-color:var(--naranja);}#piramide h2{color:var(--naranja);}
+  #cono .tarjeta{border-top-color:var(--morado);}     #cono h2{color:var(--morado);}
+  #esfera .tarjeta{border-top-color:var(--cian);}     #esfera h2{color:var(--cian);}
+
+  /* Reto */
+  #reto .tarjeta{border-top-color:var(--rosa);}
+  .reto-pregunta{font-size:1.05rem; font-weight:700; margin:10px 0;}
+  .reto-fig{text-align:center; margin:10px 0;}
+  .opciones{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0;}
+  @media(max-width:520px){.opciones{grid-template-columns:1fr;}}
+  .opciones button{padding:12px; border:2px solid var(--linea); background:#fff; border-radius:10px;
+    cursor:pointer; font-size:1rem; font-weight:700; transition:.15s;}
+  .opciones button:hover{border-color:var(--rosa);}
+  .opciones button.bien{background:var(--verde-claro); border-color:var(--ok); color:var(--ok);}
+  .opciones button.mal{background:#fdeaee; border-color:var(--mal); color:var(--mal);}
+  .marcador{display:flex; gap:16px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+  .marcador .puntos{font-size:1.1rem; font-weight:800;}
+  .pista{background:#fffbe9; border:1px solid #f0e0a0; border-radius:8px; padding:10px 12px; font-size:.88rem; margin-top:10px; display:none;}
+  .pista.visible{display:block;}
+  .btn{background:var(--rosa); color:#fff; border:none; border-radius:22px; padding:10px 20px;
+    font-weight:700; cursor:pointer; font-size:.92rem;}
+  .btn.gris{background:#fff; color:var(--tinta); border:1.5px solid var(--linea);}
+  .feedback{margin-top:10px; font-weight:700; min-height:22px;}
+
+  /* barra accesibilidad */
+  #barraAcc{display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;
+    background:#fff; padding:8px; border-bottom:1px solid var(--linea);}
+  .acc{border:1.5px solid var(--linea); background:#fff; border-radius:18px; padding:5px 12px;
+    font-size:.8rem; font-weight:600; cursor:pointer;}
+  .acc.on{background:var(--tinta); color:#fff; border-color:var(--tinta);}
+
+  /* niveles del reto */
+  .niveles{display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 10px;}
+  .niveles button{border:1.5px solid var(--linea); background:#fff; border-radius:18px;
+    padding:6px 14px; font-size:.82rem; font-weight:700; cursor:pointer;}
+  .niveles button.on{background:var(--rosa); color:#fff; border-color:var(--rosa);}
+  .informe{background:var(--verde-claro); border:1px solid var(--verde); border-radius:10px;
+    padding:10px 14px; margin-top:12px; font-size:.9rem; font-weight:600; color:var(--verde); display:none;}
+  .informe.visible{display:block;}
+
+  /* modos de accesibilidad */
+  body.txt-grande{font-size:1.18rem;}
+  body.txt-grande .res-fila .val{font-size:1.2rem;}
+  body.contraste{background:#fff;}
+  body.contraste .tarjeta, body.contraste .figura, body.contraste .resultados, body.contraste .pasos{
+    background:#fff; border-color:#000;}
+  body.contraste{--gris:#222; --linea:#444;}
+
+  footer{text-align:center; color:var(--gris); font-size:.82rem; padding:24px 14px 40px;}
+  .badge{display:inline-block; background:var(--rosa-claro); color:var(--rosa); border-radius:12px;
+    padding:2px 10px; font-size:.75rem; font-weight:700; margin-left:6px;}
+  details{margin-top:10px; font-size:.88rem;}
+  summary{cursor:pointer; font-weight:700; color:var(--gris);}
+
+  /* ===== MINIJUEGO ===== */
+  .j-hud{display:flex; gap:10px; justify-content:center; margin:6px 0 10px; flex-wrap:wrap;}
+  .hud-box{background:#fafaff; border:1px solid var(--linea); border-radius:12px; padding:8px 18px;
+    text-align:center; min-width:90px;}
+  .hud-box span{display:block; font-size:.74rem; color:var(--gris); font-weight:700;}
+  .hud-box b{font-size:1.4rem;}
+  .hud-box.combo b{color:#e8902a;}
+  .j-barra{height:10px; background:#eee; border-radius:8px; overflow:hidden; margin-bottom:14px;}
+  #jBarra{height:100%; width:100%; background:linear-gradient(90deg,#2f9e6b,#e8902a,#d6435b);
+    transition:width 1s linear;}
+  .j-duelo{display:flex; align-items:center; gap:10px; justify-content:center;}
+  .j-carta{flex:1; max-width:320px; background:#fafaff; border:3px solid var(--linea); border-radius:16px;
+    padding:10px; cursor:pointer; transition:.12s; display:flex; flex-direction:column; align-items:center;}
+  .j-carta:hover{border-color:#d6435b; transform:translateY(-3px); box-shadow:0 6px 16px rgba(0,0,0,.1);}
+  .j-carta .j-nombre{font-weight:800; margin-top:6px; font-size:.92rem;}
+  .j-carta .j-vol{margin-top:5px; font-size:.95rem; font-weight:800; color:var(--gris);
+    background:#fff; border:1px solid var(--linea); border-radius:8px; padding:3px 10px; animation:pop .3s;}
+  .j-carta .j-vol.gana{color:var(--ok); border-color:var(--ok); background:var(--verde-claro);}
+  .j-carta.bien{border-color:var(--ok); background:var(--verde-claro);}
+  .j-carta.mal{border-color:var(--mal); background:#fdeaee;}
+  .j-vs{font-weight:900; color:#d6435b; font-size:1.3rem;}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+  .hud-box.combo.flash b{animation:pop .3s;}
+
+  /* ===== RESPONSIVE: tablets ===== */
+  @media(max-width:760px){
+    header{padding:20px 14px 16px;}
+    header h1{font-size:1.4rem;}
+    .tarjeta{padding:16px;}
+    .tarjeta h2{font-size:1.2rem;}
+    .figura{min-height:200px;}
+    .pasos{font-size:.78rem;}
+  }
+  /* ===== RESPONSIVE: móviles ===== */
+  @media(max-width:480px){
+    header h1{font-size:1.18rem; line-height:1.3;}
+    header p{font-size:.82rem;}
+    .frase{font-size:.78rem; padding:6px 12px;}
+    nav{gap:5px; padding:8px 6px;}
+    nav button{padding:6px 10px; font-size:.76rem;}
+    #barraAcc{gap:6px;}
+    .acc{padding:5px 10px; font-size:.74rem;}
+    main{padding:14px 10px 50px;}
+    .tarjeta{padding:13px; border-radius:13px;}
+    .tarjeta h2{font-size:1.1rem;}
+    .grid{gap:14px;}
+    .figura{min-height:180px; padding:6px;}
+    .formula-box{font-size:.78rem;}
+    .res-fila{font-size:.86rem;}
+    .res-fila .val{font-size:.96rem;}
+    .pasos{font-size:.72rem; padding:9px 10px; line-height:1.6; overflow-x:auto;}
+    .reto-pregunta{font-size:.98rem;}
+    .opciones button{padding:11px; font-size:.94rem;}
+    .niveles button{padding:6px 11px; font-size:.78rem;}
+    .marcador{gap:8px;}
+    .marcador h2{font-size:1.05rem;}
+    .j-duelo{flex-direction:column;}
+    .j-carta{max-width:100%; width:100%;}
+    .hud-box{padding:7px 12px; min-width:78px;}
+    .hud-box b{font-size:1.2rem;}
+  }
+  /* evitar que el zoom de iOS dispare al tocar inputs */
+  @media(max-width:480px){ input,button{font-size:16px;} .acc,.niveles button,nav button{font-size:.78rem;} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔬 Laboratorio de Áreas y Volúmenes</h1>
+  <p>Unidad 12 · 3.º ESO · <strong>Mueve las dimensiones y observa cómo cambia todo en tiempo real</strong></p>
+  <div class="frase">✦ Cada problema que entiendes hoy, te acerca a tu mejor versión ✦</div>
+</header>
+
+<div id="barraAcc">
+  <span style="font-weight:700;font-size:.82rem;color:var(--gris)">Accesibilidad:</span>
+  <button id="btnTexto" class="acc">🔠 Texto grande</button>
+  <button id="btnContraste" class="acc">🌗 Alto contraste</button>
+</div>
+
+<nav id="nav">
+  <button data-tab="prisma" class="activo" style="--c:var(--verde)">▣ Prisma pentagonal</button>
+  <button data-tab="cilindro" style="--c:var(--azul)">⬢ Cilindro</button>
+  <button data-tab="piramide" style="--c:var(--naranja)">▲ Pirámide hexagonal</button>
+  <button data-tab="cono" style="--c:var(--morado)">◬ Cono</button>
+  <button data-tab="esfera" style="--c:var(--cian)">● Esfera</button>
+  <button data-tab="reto" style="--c:var(--rosa)">🎯 Reto: ¡demuéstralo!</button>
+  <button data-tab="juego" style="--c:#d6435b">⚔️ Minijuego</button>
+</nav>
+
+<main>
+
+<!-- ============ PRISMA ============ -->
+<section id="prisma" class="panel activo">
+  <div class="tarjeta">
+    <h2>▣ Prisma pentagonal regular</h2>
+    <p class="sub">Dos bases pentagonales iguales + paredes rectangulares. "Dos bases iguales + paredes".</p>
+    <div class="grid">
+      <div>
+        <div class="figura" id="figPrisma"></div>
+        <div class="control">
+          <label>Lado de la base &nbsp;a <span id="vPa">3</span> cm</label>
+          <input type="range" id="Pa" min="1" max="8" step="0.5" value="3">
+        </div>
+        <div class="control">
+          <label>Altura del prisma &nbsp;h <span id="vPh">6</span> cm</label>
+          <input type="range" id="Ph" min="1" max="12" step="0.5" value="6">
+        </div>
+      </div>
+      <div>
+        <div class="formula-box">$$P = 5a \qquad A_b=\dfrac{P\cdot a_p}{2} \qquad A_L=P\cdot h \qquad A_T=2A_b+A_L \qquad V=A_b\cdot h$$</div>
+        <div class="resultados">
+          <div class="res-fila"><span class="etq">Perímetro base \(P\)</span><span class="val" id="rP_P"></span></div>
+          <div class="res-fila"><span class="etq">Apotema base \(a_p\) (dato)</span><span class="val" id="rP_ap"></span></div>
+          <div class="res-fila"><span class="etq">Área de la base \(A_b\)</span><span class="val" id="rP_Ab"></span></div>
+          <div class="res-fila"><span class="etq">Área lateral \(A_L\)</span><span class="val" id="rP_Al"></span></div>
+          <div class="res-fila"><span class="etq">Área total \(A_T\)</span><span class="val" id="rP_At"></span></div>
+          <div class="res-fila"><span class="etq">Volumen \(V\)</span><span class="val" id="rP_V"></span></div>
+        </div>
+        <div class="pasos" id="rP_pasos"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CILINDRO ============ -->
+<section id="cilindro" class="panel">
+  <div class="tarjeta">
+    <h2>⬢ Cilindro</h2>
+    <p class="sub">Dos círculos + un rectángulo (la pared "desenrollada"). Cuidado: r es el radio, no el diámetro.</p>
+    <div class="grid">
+      <div>
+        <div class="figura" id="figCil"></div>
+        <div class="control">
+          <label>Radio &nbsp;r <span id="vCr">3</span> cm</label>
+          <input type="range" id="Cr" min="1" max="8" step="0.5" value="3">
+        </div>
+        <div class="control">
+          <label>Altura &nbsp;h <span id="vCh">4</span> cm</label>
+          <input type="range" id="Ch" min="1" max="12" step="0.5" value="4">
+        </div>
+      </div>
+      <div>
+        <div class="formula-box">$$A_T = 2\pi r^2 + 2\pi r h \qquad V = \pi r^2 h$$</div>
+        <div class="resultados">
+          <div class="res-fila"><span class="etq">Área de las 2 bases \(2\pi r^2\)</span><span class="val" id="rC_bases"></span></div>
+          <div class="res-fila"><span class="etq">Área lateral \(2\pi r h\)</span><span class="val" id="rC_lat"></span></div>
+          <div class="res-fila"><span class="etq">Área total \(A_T\)</span><span class="val" id="rC_At"></span></div>
+          <div class="res-fila"><span class="etq">Volumen \(V\)</span><span class="val" id="rC_V"></span></div>
+        </div>
+        <div class="pasos" id="rC_pasos"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PIRAMIDE ============ -->
+<section id="piramide" class="panel">
+  <div class="tarjeta">
+    <h2>▲ Pirámide hexagonal regular</h2>
+    <p class="sub">Una base hexagonal + 6 triángulos. La apotema de la pirámide (apₗ) es la altura de cada cara triangular.</p>
+    <div class="grid">
+      <div>
+        <div class="figura" id="figPir"></div>
+        <div class="control">
+          <label>Lado de la base &nbsp;a <span id="vYa">5</span> cm</label>
+          <input type="range" id="Ya" min="1" max="8" step="0.5" value="5">
+        </div>
+        <div class="control">
+          <label>Altura &nbsp;h <span id="vYh">8</span> cm</label>
+          <input type="range" id="Yh" min="1" max="14" step="0.5" value="8">
+        </div>
+      </div>
+      <div>
+        <div class="formula-box">$$P=6a \quad a_l=\sqrt{h^2+a_p^{\,2}} \quad A_b=\dfrac{P\cdot a_p}{2} \quad A_L=\dfrac{P\cdot a_l}{2} \quad V=\dfrac{A_b\cdot h}{3}$$</div>
+        <div class="resultados">
+          <div class="res-fila"><span class="etq">Apotema base \(a_p\) (dato)</span><span class="val" id="rY_ap"></span></div>
+          <div class="res-fila"><span class="etq">Apotema pirámide \(a_l\)</span><span class="val" id="rY_g"></span></div>
+          <div class="res-fila"><span class="etq">Área de la base \(A_b\)</span><span class="val" id="rY_Ab"></span></div>
+          <div class="res-fila"><span class="etq">Área lateral \(A_L\)</span><span class="val" id="rY_Al"></span></div>
+          <div class="res-fila"><span class="etq">Área total \(A_T\)</span><span class="val" id="rY_At"></span></div>
+          <div class="res-fila"><span class="etq">Volumen \(V\)</span><span class="val" id="rY_V"></span></div>
+        </div>
+        <div class="pasos" id="rY_pasos"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONO ============ -->
+<section id="cono" class="panel">
+  <div class="tarjeta">
+    <h2>◬ Cono</h2>
+    <p class="sub">Un círculo + un sector circular (abanico). Atención: la pirámide y el cono dividen entre 3 el volumen.</p>
+    <div class="grid">
+      <div>
+        <div class="figura" id="figCono"></div>
+        <div class="control">
+          <label>Radio &nbsp;r <span id="vKr">5</span> cm</label>
+          <input type="range" id="Kr" min="1" max="8" step="0.5" value="5">
+        </div>
+        <div class="control">
+          <label>Altura &nbsp;h <span id="vKh">12</span> cm</label>
+          <input type="range" id="Kh" min="1" max="16" step="0.5" value="12">
+        </div>
+      </div>
+      <div>
+        <div class="formula-box">$$g=\sqrt{h^2+r^2} \qquad A_T=\pi r^2 + \pi r g \qquad V=\dfrac{\pi r^2 h}{3}$$</div>
+        <div class="resultados">
+          <div class="res-fila"><span class="etq">Generatriz \(g\)</span><span class="val" id="rK_g"></span></div>
+          <div class="res-fila"><span class="etq">Área de la base \(\pi r^2\)</span><span class="val" id="rK_base"></span></div>
+          <div class="res-fila"><span class="etq">Área lateral \(\pi r g\)</span><span class="val" id="rK_lat"></span></div>
+          <div class="res-fila"><span class="etq">Área total \(A_T\)</span><span class="val" id="rK_At"></span></div>
+          <div class="res-fila"><span class="etq">Volumen \(V\)</span><span class="val" id="rK_V"></span></div>
+        </div>
+        <div class="pasos" id="rK_pasos"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ESFERA ============ -->
+<section id="esfera" class="panel">
+  <div class="tarjeta">
+    <h2>● Esfera</h2>
+    <p class="sub">"Redonda por todos lados". No tiene desarrollo plano exacto: ¡por eso necesita fórmulas especiales!</p>
+    <div class="grid">
+      <div>
+        <div class="figura" id="figEsf"></div>
+        <div class="control">
+          <label>Radio &nbsp;r <span id="vEr">7</span> cm</label>
+          <input type="range" id="Er" min="1" max="10" step="0.5" value="7">
+        </div>
+      </div>
+      <div>
+        <div class="formula-box">$$A = 4\pi r^2 \qquad V = \dfrac{4}{3}\pi r^3$$</div>
+        <div class="resultados">
+          <div class="res-fila"><span class="etq">Área (superficie) \(A\)</span><span class="val" id="rE_A"></span></div>
+          <div class="res-fila"><span class="etq">Volumen \(V\)</span><span class="val" id="rE_V"></span></div>
+        </div>
+        <div class="pasos" id="rE_pasos"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RETO ============ -->
+<section id="reto" class="panel">
+  <div class="tarjeta">
+    <div class="marcador">
+      <h2>🎯 Reto: ¡demuéstralo!</h2>
+      <div class="puntos">Aciertos: <span id="aciertos">0</span> / <span id="total">0</span></div>
+    </div>
+    <p class="sub">Calcula en tu cuaderno y elige la respuesta. Pulsa "Ver pista" si te atascas. <strong>Elige tu nivel:</strong></p>
+    <div class="niveles" id="niveles">
+      <button data-niv="facil" class="on">🟢 Fácil</button>
+      <button data-niv="medio">🟡 Medio</button>
+      <button data-niv="avanzado">🔴 Avanzado</button>
+    </div>
+    <div class="informe" id="informe"></div>
+    <div class="reto-fig" id="retoFig"></div>
+    <div class="reto-pregunta" id="retoPreg">Cargando…</div>
+    <div class="opciones" id="retoOpc"></div>
+    <div class="feedback" id="retoFb"></div>
+    <div class="pista" id="retoPista"></div>
+    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn gris" id="btnPista">💡 Ver pista</button>
+      <button class="btn" id="btnSig">Siguiente reto →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MINIJUEGO ============ -->
+<section id="juego" class="panel">
+  <div class="tarjeta" style="border-top-color:#d6435b;">
+    <div class="marcador">
+      <h2 style="color:#d6435b;">⚔️ Duelo de cuerpos</h2>
+      <div class="puntos">🏆 Récord: <span id="jRecord">0</span></div>
+    </div>
+    <p class="sub">Aparecen dos cuerpos geométricos. <strong>¿Cuál tiene MAYOR volumen?</strong> Pulsa el que creas mayor antes de que se acabe el tiempo. ¡Encadena aciertos para subir el combo!</p>
+
+    <!-- INTRO -->
+    <div id="jIntro" style="text-align:center; padding:18px 0;">
+      <p style="font-size:1.05rem;">Tienes <strong>60 segundos</strong>. Cada acierto suma puntos; el <strong>combo</strong> multiplica. Un fallo reinicia el combo y resta tiempo. 💥</p>
+      <button class="btn" id="jStart" style="background:#d6435b; font-size:1.05rem; padding:12px 28px;">▶ ¡Empezar!</button>
+    </div>
+
+    <!-- JUEGO -->
+    <div id="jPlay" style="display:none;">
+      <div class="j-hud">
+        <div class="hud-box"><span>⏱️ Tiempo</span><b id="jTime">60</b></div>
+        <div class="hud-box"><span>⭐ Puntos</span><b id="jScore">0</b></div>
+        <div class="hud-box combo"><span>🔥 Combo</span><b id="jCombo">x1</b></div>
+      </div>
+      <div class="j-barra"><div id="jBarra"></div></div>
+      <div class="j-duelo">
+        <button class="j-carta" id="jIzq" data-lado="0"></button>
+        <div class="j-vs">VS</div>
+        <button class="j-carta" id="jDer" data-lado="1"></button>
+      </div>
+      <div class="feedback" id="jFb" style="text-align:center;"></div>
+    </div>
+
+    <!-- FIN -->
+    <div id="jFin" style="display:none; text-align:center; padding:14px 0;">
+      <div style="font-size:2.4rem;">🎉</div>
+      <h3 style="margin:6px 0;">¡Tiempo!</h3>
+      <p style="font-size:1.1rem;">Has conseguido <strong id="jScoreFin" style="color:#d6435b;">0</strong> puntos
+      con <strong id="jAciertosFin">0</strong> aciertos.</p>
+      <p id="jMsgFin" style="font-weight:700;"></p>
+      <button class="btn" id="jReplay" style="background:#d6435b;">🔁 Jugar otra vez</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Hecho con código + IA para 3.º ESO · <span class="badge">imposible sin IA</span><br>
+  Dibuja · Escribe la fórmula · Sustituye con unidades · Calcula · Revisa el resultado. ¡Tú decides! 💪
+</footer>
+
+<script>
+/* ---------- utilidades ---------- */
+const PI = Math.PI;
+const r2 = x => Math.round(x*100)/100;            // 2 decimales
+const cot = x => 1/Math.tan(x);
+const $ = id => document.getElementById(id);
+
+/* ---------- LaTeX con KaTeX ---------- */
+const TEXOPC={delimiters:[
+  {left:'$$',right:'$$',display:true},
+  {left:'\\(',right:'\\)',display:false}
+], throwOnError:false};
+function tex(el){ if(window.renderMathInElement && el) renderMathInElement(el,TEXOPC); }
+// renderiza todas las fórmulas estáticas cuando KaTeX ha cargado (script defer)
+window.addEventListener('load',()=>tex(document.body));
+
+/* ---------- navegación por pestañas ---------- */
+document.querySelectorAll('#nav button').forEach(b=>{
+  b.style.borderColor = b.style.getPropertyValue('--c');
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#nav button').forEach(x=>{x.classList.remove('activo'); x.style.background='#fff'; x.style.color='var(--tinta)';});
+    b.classList.add('activo'); b.style.background=b.style.getPropertyValue('--c'); b.style.color='#fff';
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('activo'));
+    $(b.dataset.tab).classList.add('activo');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+// activar color del primer botón
+const primero=document.querySelector('#nav button.activo');
+primero.style.background=primero.style.getPropertyValue('--c'); primero.style.color='#fff';
+
+/* ---------- accesibilidad ---------- */
+$('btnTexto').addEventListener('click',function(){document.body.classList.toggle('txt-grande'); this.classList.toggle('on');});
+$('btnContraste').addEventListener('click',function(){document.body.classList.toggle('contraste'); this.classList.toggle('on');});
+
+/* ====================================================
+   FIGURAS SVG (simples, redibujadas según proporciones)
+   ==================================================== */
+// genera los 5 vértices de un pentágono regular (vista en perspectiva: aplastado en vertical)
+function pentagono(cx,cy,R,sq){
+  const p=[];
+  for(let i=0;i<5;i++){
+    const ang=Math.PI/2 + i*2*Math.PI/5;   // un vértice apuntando hacia el observador (abajo)
+    p.push([cx+R*Math.cos(ang), cy+R*sq*Math.sin(ang)]);
+  }
+  return p;
+}
+function svgPrisma(a,h){
+  const cx=110, top=58, sq=0.42;
+  const R=Math.min(58,14+a*5.4);            // el "radio" del pentágono escala con el lado a
+  const H=Math.min(150,40+h*9);
+  const sup=pentagono(cx,top,R,sq);          // base superior
+  const inf=pentagono(cx,top+H,R,sq);        // base inferior
+  const str=p=>p.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');
+  let aristas='';
+  for(let i=0;i<5;i++)
+    aristas+=`<line x1="${sup[i][0].toFixed(1)}" y1="${sup[i][1].toFixed(1)}" x2="${inf[i][0].toFixed(1)}" y2="${inf[i][1].toFixed(1)}"/>`;
+  const maxX=Math.max(...sup.map(q=>q[0]));
+  const vh=top+H+R*sq+34;
+  return `<svg viewBox="0 0 220 ${vh.toFixed(0)}" width="220">
+    <g fill="#c8ecd9" stroke="#2f9e6b" stroke-width="2" stroke-linejoin="round">
+      <polygon points="${str(inf)}"/>
+      ${aristas}
+      <polygon points="${str(sup)}" fill="#e3f5ec"/>
+    </g>
+    <text x="${(maxX+5).toFixed(0)}" y="${(top+H/2).toFixed(0)}" font-size="13" fill="#2f9e6b">h=${h}</text>
+    <text x="${cx-12}" y="${(top+H+R*sq+24).toFixed(0)}" font-size="13" fill="#2f9e6b">a=${a}</text>
+  </svg>`;
+}
+function svgCil(r,h){
+  const rx=Math.min(55,20+r*6), H=Math.min(150,40+h*9), cx=110, top=50;
+  return `<svg viewBox="0 0 220 240" width="220">
+    <g fill="#e4eefb" stroke="#3478c2" stroke-width="2">
+      <path d="M ${cx-rx} ${top} L ${cx-rx} ${top+H} A ${rx} 14 0 0 0 ${cx+rx} ${top+H} L ${cx+rx} ${top} Z" fill="#cfe0f7"/>
+      <ellipse cx="${cx}" cy="${top+H}" rx="${rx}" ry="14"/>
+      <ellipse cx="${cx}" cy="${top}" rx="${rx}" ry="14" fill="#e4eefb"/>
+    </g>
+    <line x1="${cx}" y1="${top}" x2="${cx+rx}" y2="${top}" stroke="#3478c2" stroke-dasharray="3"/>
+    <text x="${cx+8}" y="${top-4}" font-size="13" fill="#3478c2">r=${r}</text>
+    <text x="${cx+rx+6}" y="${top+H/2}" font-size="13" fill="#3478c2">h=${h}</text>
+  </svg>`;
+}
+function svgPir(a,h){
+  const w=Math.min(70,25+a*7), H=Math.min(150,40+h*9), cx=110, baseY=70+H, ax=cx;
+  return `<svg viewBox="0 0 220 250" width="220">
+    <g fill="#fdeede" stroke="#e8902a" stroke-width="2" stroke-linejoin="round">
+      <polygon points="${cx-w},${baseY} ${cx-w/2},${baseY+22} ${cx+w/2},${baseY+22} ${cx+w},${baseY} ${cx+w/2},${baseY-22} ${cx-w/2},${baseY-22}" fill="#fbdcb8"/>
+      <line x1="${ax}" y1="60" x2="${cx-w}" y2="${baseY}"/>
+      <line x1="${ax}" y1="60" x2="${cx+w}" y2="${baseY}"/>
+      <line x1="${ax}" y1="60" x2="${cx-w/2}" y2="${baseY-22}"/>
+      <line x1="${ax}" y1="60" x2="${cx+w/2}" y2="${baseY-22}"/>
+    </g>
+    <line x1="${ax}" y1="60" x2="${cx}" y2="${baseY}" stroke="#e8902a" stroke-dasharray="3"/>
+    <text x="${cx+6}" y="${(60+baseY)/2}" font-size="13" fill="#e8902a">h=${h}</text>
+    <text x="${cx+w-20}" y="${baseY+18}" font-size="13" fill="#e8902a">a=${a}</text>
+  </svg>`;
+}
+function svgCono(r,h){
+  const rx=Math.min(55,18+r*6), H=Math.min(150,40+h*8), cx=110, top=55, baseY=top+H;
+  return `<svg viewBox="0 0 220 250" width="220">
+    <g fill="#efe7f9" stroke="#8a5cc2" stroke-width="2">
+      <path d="M ${cx} ${top} L ${cx-rx} ${baseY} A ${rx} 14 0 0 0 ${cx+rx} ${baseY} Z" fill="#ddccf2"/>
+      <ellipse cx="${cx}" cy="${baseY}" rx="${rx}" ry="14"/>
+    </g>
+    <line x1="${cx}" y1="${top}" x2="${cx}" y2="${baseY}" stroke="#8a5cc2" stroke-dasharray="3"/>
+    <line x1="${cx}" y1="${baseY}" x2="${cx+rx}" y2="${baseY}" stroke="#8a5cc2" stroke-dasharray="3"/>
+    <text x="${cx-26}" y="${(top+baseY)/2}" font-size="13" fill="#8a5cc2">h=${h}</text>
+    <text x="${cx+rx/2-6}" y="${baseY+28}" font-size="13" fill="#8a5cc2">r=${r}</text>
+  </svg>`;
+}
+function svgEsf(r){
+  const R=Math.min(85,30+r*6), cx=110, cy=110;
+  return `<svg viewBox="0 0 220 230" width="220">
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="#e0f6f8" stroke="#2bb3c0" stroke-width="2"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R*0.32}" fill="none" stroke="#2bb3c0" stroke-width="1.5" stroke-dasharray="4"/>
+    <line x1="${cx}" y1="${cy}" x2="${cx+R}" y2="${cy}" stroke="#2bb3c0" stroke-width="1.5" stroke-dasharray="3"/>
+    <text x="${cx+R/2-6}" y="${cy-6}" font-size="13" fill="#2bb3c0">r=${r}</text>
+  </svg>`;
+}
+
+/* ====================================================
+   CÁLCULOS EN VIVO
+   ==================================================== */
+// --- Prisma pentagonal ---
+function updPrisma(){
+  const a=+$('Pa').value, h=+$('Ph').value;
+  $('vPa').textContent=a; $('vPh').textContent=h;
+  const P=5*a;
+  const ap=a/(2*Math.tan(PI/5));   // apotema del pentágono (en 3.º ESO suele darse como dato)
+  const Ab=(P*ap)/2;               // Área = (perímetro · apotema) / 2
+  const Al=P*h;
+  const At=2*Ab+Al;
+  const V=Ab*h;
+  $('rP_P').textContent=P+' cm';
+  $('rP_ap').textContent=r2(ap)+' cm';
+  $('rP_Ab').textContent=r2(Ab)+' cm²';
+  $('rP_Al').textContent=r2(Al)+' cm²';
+  $('rP_At').textContent=r2(At)+' cm²';
+  $('rP_V').textContent=r2(V)+' cm³';
+  $('figPrisma').innerHTML=svgPrisma(a,h);
+  $('rP_pasos').innerHTML=
+`\\(P = 5\\cdot ${a} = ${P}\\ \\text{cm}\\)<br>
+\\(a_p = ${r2(ap)}\\ \\text{cm}\\ \\text{(dato)}\\)<br>
+\\(\\displaystyle A_b=\\frac{P\\cdot a_p}{2}=\\frac{${P}\\cdot ${r2(ap)}}{2}=${r2(Ab)}\\ \\text{cm}^2\\)<br>
+\\(A_L = P\\cdot h = ${P}\\cdot ${h} = ${r2(Al)}\\ \\text{cm}^2\\)<br>
+\\(A_T = 2\\cdot ${r2(Ab)} + ${r2(Al)} = \\textcolor{#e84a8a}{${r2(At)}\\ \\text{cm}^2}\\)<br>
+\\(V = A_b\\cdot h = ${r2(Ab)}\\cdot ${h} = \\textcolor{#e84a8a}{${r2(V)}\\ \\text{cm}^3}\\)`;
+  tex($('rP_pasos'));
+}
+// --- Cilindro ---
+function updCil(){
+  const r=+$('Cr').value, h=+$('Ch').value;
+  $('vCr').textContent=r; $('vCh').textContent=h;
+  const bases=2*PI*r*r, lat=2*PI*r*h, At=bases+lat, V=PI*r*r*h;
+  $('rC_bases').textContent=r2(bases)+' cm²';
+  $('rC_lat').textContent=r2(lat)+' cm²';
+  $('rC_At').textContent=r2(At)+' cm²';
+  $('rC_V').textContent=r2(V)+' cm³';
+  $('figCil').innerHTML=svgCil(r,h);
+  $('rC_pasos').innerHTML=
+`\\(2\\pi r^2 = 2\\cdot\\pi\\cdot ${r}^2 = ${r2(bases)}\\ \\text{cm}^2\\ \\text{(2 bases)}\\)<br>
+\\(2\\pi r h = 2\\cdot\\pi\\cdot ${r}\\cdot ${h} = ${r2(lat)}\\ \\text{cm}^2\\ \\text{(lateral)}\\)<br>
+\\(A_T = ${r2(bases)} + ${r2(lat)} = \\textcolor{#e84a8a}{${r2(At)}\\ \\text{cm}^2}\\)<br>
+\\(V = \\pi r^2 h = \\pi\\cdot ${r}^2\\cdot ${h} = \\textcolor{#e84a8a}{${r2(V)}\\ \\text{cm}^3}\\)`;
+  tex($('rC_pasos'));
+}
+// --- Pirámide hexagonal ---
+function updPir(){
+  const a=+$('Ya').value, h=+$('Yh').value;
+  $('vYa').textContent=a; $('vYh').textContent=h;
+  const ap=(Math.sqrt(3)/2)*a;
+  const g=Math.sqrt(h*h+ap*ap);
+  const P=6*a;
+  const Ab=(P*ap)/2;
+  const Al=(P*g)/2;
+  const At=Ab+Al;
+  const V=(1/3)*Ab*h;
+  $('rY_ap').textContent=r2(ap)+' cm';
+  $('rY_g').textContent=r2(g)+' cm';
+  $('rY_Ab').textContent=r2(Ab)+' cm²';
+  $('rY_Al').textContent=r2(Al)+' cm²';
+  $('rY_At').textContent=r2(At)+' cm²';
+  $('rY_V').textContent=r2(V)+' cm³';
+  $('figPir').innerHTML=svgPir(a,h);
+  $('rY_pasos').innerHTML=
+`\\(P = 6\\cdot ${a} = ${P}\\ \\text{cm}\\)<br>
+\\(a_p = ${r2(ap)}\\ \\text{cm}\\ \\text{(dato)}\\)<br>
+\\(a_l = \\sqrt{${h}^2 + ${r2(ap)}^2} = ${r2(g)}\\ \\text{cm}\\)<br>
+\\(\\displaystyle A_b=\\frac{P\\cdot a_p}{2}=\\frac{${P}\\cdot ${r2(ap)}}{2}=${r2(Ab)}\\ \\text{cm}^2\\)<br>
+\\(\\displaystyle A_L=\\frac{P\\cdot a_l}{2}=\\frac{${P}\\cdot ${r2(g)}}{2}=${r2(Al)}\\ \\text{cm}^2\\)<br>
+\\(A_T = ${r2(Ab)} + ${r2(Al)} = \\textcolor{#e84a8a}{${r2(At)}\\ \\text{cm}^2}\\)<br>
+\\(\\displaystyle V=\\frac{A_b\\cdot h}{3}=\\frac{${r2(Ab)}\\cdot ${h}}{3}=\\textcolor{#e84a8a}{${r2(V)}\\ \\text{cm}^3}\\)`;
+  tex($('rY_pasos'));
+}
+// --- Cono ---
+function updCono(){
+  const r=+$('Kr').value, h=+$('Kh').value;
+  $('vKr').textContent=r; $('vKh').textContent=h;
+  const g=Math.sqrt(h*h+r*r);
+  const base=PI*r*r, lat=PI*r*g, At=base+lat, V=(1/3)*PI*r*r*h;
+  $('rK_g').textContent=r2(g)+' cm';
+  $('rK_base').textContent=r2(base)+' cm²';
+  $('rK_lat').textContent=r2(lat)+' cm²';
+  $('rK_At').textContent=r2(At)+' cm²';
+  $('rK_V').textContent=r2(V)+' cm³';
+  $('figCono').innerHTML=svgCono(r,h);
+  $('rK_pasos').innerHTML=
+`\\(g = \\sqrt{${h}^2 + ${r}^2} = ${r2(g)}\\ \\text{cm}\\)<br>
+\\(\\pi r^2 = \\pi\\cdot ${r}^2 = ${r2(base)}\\ \\text{cm}^2\\ \\text{(base)}\\)<br>
+\\(\\pi r g = \\pi\\cdot ${r}\\cdot ${r2(g)} = ${r2(lat)}\\ \\text{cm}^2\\ \\text{(lateral)}\\)<br>
+\\(A_T = ${r2(base)} + ${r2(lat)} = \\textcolor{#e84a8a}{${r2(At)}\\ \\text{cm}^2}\\)<br>
+\\(\\displaystyle V=\\frac{\\pi r^2 h}{3}=\\frac{${r2(base)}\\cdot ${h}}{3}=\\textcolor{#e84a8a}{${r2(V)}\\ \\text{cm}^3}\\)`;
+  tex($('rK_pasos'));
+}
+// --- Esfera ---
+function updEsf(){
+  const r=+$('Er').value;
+  $('vEr').textContent=r;
+  const A=4*PI*r*r, V=(4/3)*PI*r*r*r;
+  $('rE_A').textContent=r2(A)+' cm²';
+  $('rE_V').textContent=r2(V)+' cm³';
+  $('figEsf').innerHTML=svgEsf(r);
+  $('rE_pasos').innerHTML=
+`\\(A = 4\\cdot\\pi\\cdot ${r}^2 = \\textcolor{#e84a8a}{${r2(A)}\\ \\text{cm}^2}\\)<br>
+\\(\\displaystyle V=\\frac{4}{3}\\cdot\\pi\\cdot ${r}^3 = \\textcolor{#e84a8a}{${r2(V)}\\ \\text{cm}^3}\\)`;
+  tex($('rE_pasos'));
+}
+
+['Pa','Ph'].forEach(id=>$(id).addEventListener('input',updPrisma));
+['Cr','Ch'].forEach(id=>$(id).addEventListener('input',updCil));
+['Ya','Yh'].forEach(id=>$(id).addEventListener('input',updPir));
+['Kr','Kh'].forEach(id=>$(id).addEventListener('input',updCono));
+$('Er').addEventListener('input',updEsf);
+updPrisma(); updCil(); updPir(); updCono(); updEsf();
+
+/* ====================================================
+   RETO AUTOEVALUABLE (genera números al azar)
+   ==================================================== */
+let aciertos=0, total=0, retoActual=null, nivel='facil';
+const rndPaso=(a,b,paso=1)=>{const n=Math.round((a+Math.random()*(b-a))/paso)*paso; return Math.round(n*10)/10;};
+// genera una dimensión según el nivel elegido
+function rnd(a,b){
+  if(nivel==='facil')    return rndPaso(a, Math.min(b,6), 1);      // enteros pequeños
+  if(nivel==='medio')    return rndPaso(a, b, 1);                   // enteros mayores
+  return rndPaso(a+0.5, b, 0.5);                                    // avanzado: con decimales
+}
+
+// selector de nivel
+document.querySelectorAll('#niveles button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#niveles button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); nivel=b.dataset.niv; nuevoReto();
+  });
+});
+
+function actualizarInforme(){
+  const inf=$('informe');
+  if(total===0){inf.classList.remove('visible'); return;}
+  const pct=Math.round(aciertos/total*100);
+  let msg;
+  if(pct>=80) msg='¡Excelente! 🌟 Dominas las fórmulas.';
+  else if(pct>=50) msg='Vas bien 👍 Revisa las pistas de los fallos.';
+  else msg='Sigue practicando 💪 Vuelve a las pestañas y observa los pasos.';
+  inf.textContent=`📊 Tu progreso: ${aciertos} de ${total} correctos (${pct}%). ${msg}`;
+  inf.classList.add('visible');
+}
+
+function nuevoReto(){
+  const tipos=['cilV','cilA','esfV','esfA','conoV','prismaV'];
+  const t=tipos[Math.floor(Math.random()*tipos.length)];
+  let fig='', preg='', correcta=0, pista='', unidad='cm³';
+
+  if(t==='cilV'){
+    const r=rnd(2,6,1), h=rnd(3,9,1);
+    correcta=r2(PI*r*r*h);
+    fig=svgCil(r,h);
+    preg=`Calcula el VOLUMEN de un cilindro de radio r=${r} cm y altura h=${h} cm.`;
+    pista=`V = πr²h = π·${r}²·${h}. Recuerda: el radio va al cuadrado.`;
+  } else if(t==='cilA'){
+    const r=rnd(2,5,1), h=rnd(3,8,1); unidad='cm²';
+    correcta=r2(2*PI*r*r+2*PI*r*h);
+    fig=svgCil(r,h);
+    preg=`Calcula el ÁREA TOTAL de un cilindro de r=${r} cm y h=${h} cm.`;
+    pista=`A_T = 2πr² + 2πrh. No olvides las DOS bases.`;
+  } else if(t==='esfV'){
+    const r=rnd(2,6,1);
+    correcta=r2((4/3)*PI*r*r*r);
+    fig=svgEsf(r);
+    preg=`Calcula el VOLUMEN de una esfera de radio r=${r} cm.`;
+    pista=`V = (4/3)·π·r³. El radio va al CUBO.`;
+  } else if(t==='esfA'){
+    const r=rnd(2,7,1); unidad='cm²';
+    correcta=r2(4*PI*r*r);
+    fig=svgEsf(r);
+    preg=`Calcula el ÁREA de una esfera de radio r=${r} cm.`;
+    pista=`A = 4·π·r². El radio va al cuadrado.`;
+  } else if(t==='conoV'){
+    const r=rnd(2,5,1), h=rnd(4,10,1);
+    correcta=r2((1/3)*PI*r*r*h);
+    fig=svgCono(r,h);
+    preg=`Calcula el VOLUMEN de un cono de r=${r} cm y h=${h} cm.`;
+    pista=`V = (1/3)·πr²·h. ¡No olvides dividir entre 3!`;
+  } else { // prismaV: prisma de base cuadrada para simplificar
+    const a=rnd(2,6,1), h=rnd(3,9,1);
+    correcta=r2(a*a*h);
+    fig=`<svg viewBox="0 0 200 200" width="180"><g fill="#e3f5ec" stroke="#2f9e6b" stroke-width="2" stroke-linejoin="round">
+      <polygon points="50,70 110,50 150,70 90,90"/><polygon points="50,${70+Math.min(90,h*9)} 110,${50+Math.min(90,h*9)} 150,${70+Math.min(90,h*9)} 90,${90+Math.min(90,h*9)}" fill="#c8ecd9"/>
+      <line x1="50" y1="70" x2="50" y2="${70+Math.min(90,h*9)}"/><line x1="110" y1="50" x2="110" y2="${50+Math.min(90,h*9)}"/>
+      <line x1="150" y1="70" x2="150" y2="${70+Math.min(90,h*9)}"/><line x1="90" y1="90" x2="90" y2="${90+Math.min(90,h*9)}"/></g></svg>`;
+    preg=`Calcula el VOLUMEN de un prisma de base CUADRADA de lado a=${a} cm y altura h=${h} cm.`;
+    pista=`V = Aₐ·h = (a·a)·h = ${a}·${a}·${h}.`;
+  }
+
+  // generar 3 distractores
+  const opciones=new Set([correcta]);
+  const factores=[0.5, 2, 1/3, 3, 0.66];
+  while(opciones.size<4){
+    const f=factores[Math.floor(Math.random()*factores.length)];
+    let d=r2(correcta*f);
+    if(d>0 && Math.abs(d-correcta)>0.5) opciones.add(d);
+  }
+  const arr=[...opciones].sort(()=>Math.random()-0.5);
+
+  retoActual={correcta,unidad,pista};
+  $('retoFig').innerHTML=fig;
+  $('retoPreg').textContent=preg;
+  $('retoPista').textContent='💡 '+pista;
+  $('retoPista').classList.remove('visible');
+  $('retoFb').textContent='';
+  const cont=$('retoOpc'); cont.innerHTML='';
+  arr.forEach(v=>{
+    const b=document.createElement('button');
+    b.textContent=v+' '+unidad;
+    b.onclick=()=>responder(b,v);
+    cont.appendChild(b);
+  });
+}
+function responder(btn,val){
+  if(btn.disabled) return;
+  total++;
+  document.querySelectorAll('#retoOpc button').forEach(b=>b.disabled=true);
+  if(Math.abs(val-retoActual.correcta)<0.01){
+    btn.classList.add('bien'); aciertos++;
+    $('retoFb').textContent='✅ ¡Correcto! Bien razonado.';
+    $('retoFb').style.color='var(--ok)';
+  } else {
+    btn.classList.add('mal');
+    $('retoFb').textContent='❌ No es esa. La respuesta correcta es '+retoActual.correcta+' '+retoActual.unidad+'.';
+    $('retoFb').style.color='var(--mal)';
+    document.querySelectorAll('#retoOpc button').forEach(b=>{
+      if(Math.abs(parseFloat(b.textContent)-retoActual.correcta)<0.01) b.classList.add('bien');
+    });
+    $('retoPista').classList.add('visible');
+  }
+  $('aciertos').textContent=aciertos; $('total').textContent=total;
+  actualizarInforme();
+}
+$('btnSig').onclick=nuevoReto;
+$('btnPista').onclick=()=>$('retoPista').classList.add('visible');
+nuevoReto();
+
+/* ====================================================
+   MINIJUEGO · Duelo de cuerpos (¿cuál tiene más volumen?)
+   ==================================================== */
+const rndG=(a,b,paso=1)=>{const n=Math.round((a+Math.random()*(b-a))/paso)*paso; return Math.round(n*10)/10;};
+
+function genCuerpo(){
+  const t=Math.floor(Math.random()*5);
+  let r,h,a,ap,P,Ab,vol,svg,nombre;
+  switch(t){
+    case 0: r=rndG(2,7); h=rndG(3,11); vol=PI*r*r*h; svg=svgCil(r,h);
+            nombre=`Cilindro · r=${r}, h=${h}`; break;
+    case 1: r=rndG(2,7); h=rndG(4,13); vol=(1/3)*PI*r*r*h; svg=svgCono(r,h);
+            nombre=`Cono · r=${r}, h=${h}`; break;
+    case 2: r=rndG(2,7); vol=(4/3)*PI*r*r*r; svg=svgEsf(r);
+            nombre=`Esfera · r=${r}`; break;
+    case 3: a=rndG(2,6); h=rndG(3,11); Ab=(5/4)*a*a*cot(PI/5); vol=Ab*h; svg=svgPrisma(a,h);
+            nombre=`Prisma pentagonal · a=${a}, h=${h}`; break;
+    default:a=rndG(2,6); h=rndG(4,12); ap=(Math.sqrt(3)/2)*a; P=6*a; Ab=(P*ap)/2; vol=(1/3)*Ab*h; svg=svgPir(a,h);
+            nombre=`Pirámide hexagonal · a=${a}, h=${h}`;
+  }
+  return {vol, svg, nombre};
+}
+// dos cuerpos con volúmenes suficientemente distintos para que sea justo
+function genPareja(){
+  let A,B,n=0;
+  do{ A=genCuerpo(); B=genCuerpo(); n++; }
+  while(n<40 && Math.abs(A.vol-B.vol)/Math.max(A.vol,B.vol) < 0.12);
+  return [A,B];
+}
+
+let jTime=60, jScore=0, jCombo=0, jAciertos=0, jTimer=null, pareja=null, jBloqueo=false;
+let jRecord=0;
+try{ jRecord=+(localStorage.getItem('duelo_record')||0); }catch(e){}
+$('jRecord').textContent=jRecord;
+
+function comboMult(){ return jCombo>=6?3 : jCombo>=3?2 : 1; }
+
+function nuevaRonda(){
+  pareja=genPareja();
+  jBloqueo=false;
+  ['jIzq','jDer'].forEach((id,i)=>{
+    const c=$(id);
+    c.className='j-carta';
+    c.innerHTML=pareja[i].svg+`<div class="j-nombre">${pareja[i].nombre}</div>`;
+  });
+}
+
+function responderJuego(lado){
+  if(jBloqueo || !jugando) return;
+  jBloqueo=true;
+  const mayor = pareja[0].vol > pareja[1].vol ? 0 : 1;
+  const cartas=[$('jIzq'),$('jDer')];
+  // mostrar el volumen real de cada cuerpo (feedback que enseña el porqué)
+  cartas.forEach((c,i)=>{
+    const esMayor=(i===mayor);
+    c.insertAdjacentHTML('beforeend',
+      `<div class="j-vol ${esMayor?'gana':''}">V ≈ ${r2(pareja[i].vol)} cm³ ${esMayor?'👑':''}</div>`);
+  });
+  const lado1=mayor===0?'izquierda':'derecha';
+  if(lado===mayor){
+    cartas[lado].classList.add('bien');
+    const pts=10*comboMult();
+    jScore+=pts; jCombo++; jAciertos++; jTime=Math.min(60,jTime+1);
+    $('jFb').innerHTML=`✅ <b>¡Correcto!</b> +${pts} pts · El cuerpo de la ${lado1} tiene más volumen (${r2(pareja[mayor].vol)} cm³).`;
+    $('jFb').style.color='var(--ok)';
+    const cb=document.querySelector('.hud-box.combo'); cb.classList.add('flash'); setTimeout(()=>cb.classList.remove('flash'),300);
+  } else {
+    cartas[lado].classList.add('mal'); cartas[mayor].classList.add('bien');
+    jCombo=0; jTime=Math.max(0,jTime-4);
+    $('jFb').innerHTML=`❌ <b>Casi.</b> Mayor era el de la ${lado1}: ${r2(pareja[mayor].vol)} cm³ frente a ${r2(pareja[lado].vol)} cm³. (–4 s)`;
+    $('jFb').style.color='var(--mal)';
+  }
+  refrescarHUD();
+  setTimeout(()=>{ if(jugando) nuevaRonda(); }, 1600);
+}
+
+function refrescarHUD(){
+  $('jTime').textContent=jTime;
+  $('jScore').textContent=jScore;
+  $('jCombo').textContent='x'+comboMult();
+  $('jBarra').style.width=(jTime/60*100)+'%';
+}
+
+let jugando=false;
+function iniciarJuego(){
+  jTime=60; jScore=0; jCombo=0; jAciertos=0; jugando=true;
+  $('jIntro').style.display='none'; $('jFin').style.display='none'; $('jPlay').style.display='block';
+  $('jFb').textContent='';
+  refrescarHUD(); nuevaRonda();
+  clearInterval(jTimer);
+  jTimer=setInterval(()=>{
+    jTime--; refrescarHUD();
+    if(jTime<=0) finJuego();
+  },1000);
+}
+
+function finJuego(){
+  clearInterval(jTimer); jugando=false;
+  $('jPlay').style.display='none'; $('jFin').style.display='block';
+  $('jScoreFin').textContent=jScore;
+  $('jAciertosFin').textContent=jAciertos;
+  let msg;
+  if(jScore>=300) msg='🌟 ¡Maestro de la geometría!';
+  else if(jScore>=150) msg='💪 ¡Muy bien! Tienes buen ojo.';
+  else msg='🙂 Sigue practicando en las pestañas de cada cuerpo.';
+  if(jScore>jRecord){ jRecord=jScore; try{localStorage.setItem('duelo_record',jRecord);}catch(e){} msg='🏆 ¡NUEVO RÉCORD! '+msg; }
+  $('jRecord').textContent=jRecord;
+  $('jMsgFin').textContent=msg;
+}
+
+$('jIzq').onclick=()=>responderJuego(0);
+$('jDer').onclick=()=>responderJuego(1);
+$('jStart').onclick=iniciarJuego;
+$('jReplay').onclick=iniciarJuego;
+</script>
+</body>
+</html>
